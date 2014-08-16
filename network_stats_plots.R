@@ -2,6 +2,7 @@ require(ggplot2)
 require(reshape)
 require(scales)
 
+setwd('plots_summaries')
 
 network_stats_single_plot <- function (stats) {
 	
@@ -45,8 +46,8 @@ normalize_df <- function (data_file,cols=c(1,len(data_file))) {
 	
 
 
-topology_measures=read.table("summary.txt",header=T)
-running_variances=read.table("running_variance.txt",header=T)
+topology_measures=read.table("network_topology_1999-2014_115_3-fold.txt",header=T)
+running_variances=read.table("network_topology_1999-2014_115_3-fold_running_vars.txt",header=T)
 norm_rv=normalize_df(running_variances,c(2,5))
 
 interactions <- topology_measures[1:2]

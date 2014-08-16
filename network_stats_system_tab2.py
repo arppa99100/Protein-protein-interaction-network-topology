@@ -116,7 +116,7 @@ def network_stats(data_dir,yr_start,yr_end):
 	return stats
 
 
-graph_stats=network_stats('.',1999,2014)
+graph_stats=network_stats('/var/root/Documents/todd_gibson/ismb_2015/Protein-protein-interaction-network-topology/data',1999,2014)
 
 outfl=open('summary.txt','w')
 
