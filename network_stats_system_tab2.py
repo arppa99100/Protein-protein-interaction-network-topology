@@ -6,10 +6,9 @@ import os
 def num_pubs(data_dir):
 
 	'''
-	Parses tab2 files in data_diretory returning a
+	Parses tab2 files in a data_dirtory returning a
 	dictionary with an interaction pair mapping to
-	a set of reference publications. For use in
-	determining 3-fold validation.
+	a set of reference publications.
 	'''
 
 	os.chdir(data_dir)
