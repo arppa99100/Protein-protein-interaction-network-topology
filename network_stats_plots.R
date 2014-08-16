@@ -13,7 +13,7 @@ network_stats_single_plot <- function (stats) {
 
 	return(stat_plot)
 
-	}
+}
 
 
 running_variance_plot <- function (stats) {
@@ -25,12 +25,12 @@ running_variance_plot <- function (stats) {
 
 	return(stat_plot)
 
-	}
+}
 
 
 normalize_column <- function (x) {
 	(x - min(x, na.rm=TRUE))/(max(x,na.rm=TRUE) - min(x, na.rm=TRUE))
-	}
+}
 
 
 
@@ -38,18 +38,16 @@ normalize_df <- function (data_file,cols=c(1,len(data_file))) {
 	
 	 for (i in cols[1]:cols[2]) {
 	 	data_file[,i]=normalize_column(data_file[,i])
-	 	}
+	 }
 	 
 	 return (data_file)
-	 }
+}
 	
 
 
 topology_measures=read.table("summary.txt",header=T)
 running_variances=read.table("running_variance.txt",header=T)
 norm_rv=normalize_df(running_variances,c(2,5))
-
-
 
 interactions <- topology_measures[1:2]
 transitivity = cbind(topology_measures[1], topology_measures[3])
@@ -60,7 +58,6 @@ int_plot=network_stats_single_plot(interactions)
 trans_plot=network_stats_single_plot(transitivity)
 cpl_plot=network_stats_single_plot(cpl)
 assort_plot=network_stats_single_plot(assortativity)
-
 
 interactions_var <- norm_rv[1:2]
 transitivity_var = cbind(norm_rv[1], norm_rv[3])
