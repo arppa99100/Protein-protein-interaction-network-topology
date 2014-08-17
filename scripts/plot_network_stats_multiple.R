@@ -1,0 +1,99 @@
+require(ggplot2)
+require(reshape2)
+require(scales)
+
+setwd('../output')
+
+network_stats_single_plot <- function (stats) {
+	
+	measure <- names(stats)[2]
+	stat_plot <- ggplot(data=stats,aes(x=Year,y=value,colour = variable)) + geom_line() + 
+	geom_point(aes(),colour="#3182BD")+theme(panel.border=element_rect(colour="black",fill=NA),panel.grid.minor=element_blank(),
+	panel.grid.major=element_blank(),panel.background=element_blank(),legend.position="none",
+	axis.text=element_text(size=8)) + xlab("")+ scale_x_continuous(breaks=seq(2000,2014,2))
+
+	return(stat_plot)
+
+	}
+
+
+running_variance_plot <- function (stats) {
+	
+	measure <- names(stats)[2]
+	stat_plot <- ggplot(data=stats,aes(x=Year,y=value,colour = variable)) + geom_line()+theme(panel.border=element_rect(colour="black",fill=NA),panel.grid.minor=element_blank(),
+	panel.grid.major=element_blank(),panel.background=element_blank(),legend.position="none",
+	axis.text=element_text(size=8)) + xlab("") + ylab("") + scale_x_continuous(breaks=seq(2000,2014,2))
+
+	return(stat_plot)
+
+	}
+
+
+normalize_column <- function (x) {
+	(x - min(x, na.rm=TRUE))/(max(x,na.rm=TRUE) - min(x, na.rm=TRUE))
+	}
+
+
+
+normalize_df <- function (data_file,cols=c(1,len(data_file))) {
+	
+	 for (i in cols[1]:cols[2]) {
+	 	data_file[,i]=normalize_column(data_file[,i])
+	 	}
+	 
+	 return (data_file)
+	 }
+	
+
+
+topology_measures <- read.table("summary.txt",header=T)
+running_variances <- read.table("running_variance.txt",header=T)
+norm_rv <- normalize_df(running_variances,c(2,5))
+
+topology_2 <- read.table("network_topology_1999-2014_115_3-fold.txt",header=T)
+running_variances_2 <- read.table("network_topology_1999-2014_115_3-fold_running_vars.txt",header=T)
+norm_rv_2 <- normalize_df(running_variances_2,c(2,5))
+
+interactions <- cbind(topology_measures[1:2],topology_2[2])
+names(interactions) <- c("Year","1","2")
+
+transitivity <- cbind(topology_measures[1], topology_measures[3],topology_2[3])
+names(transitivity) <- c("Year","1","2")
+
+cpl <- cbind(topology_measures[1], topology_measures[4],topology_2[4])
+names(cpl) <- c("Year","1","2")
+
+assortativity <- cbind(topology_measures[1], topology_measures[5],topology_2[5])
+names(assortativity) <- c("Year","1","2")
+
+interactions <- melt(interactions, id="Year")
+transitivity <- melt(transitivity, id="Year")
+cpl <- melt(cpl, id="Year")
+assortativity <- melt(assortativity, id="Year")
+
+int_plot <- network_stats_single_plot(interactions) + ylab("Interactions")
+trans_plot <- network_stats_single_plot(transitivity) + ylab("Transitivity")
+cpl_plot <- network_stats_single_plot(cpl) + ylab("CPL")
+assort_plot <- network_stats_single_plot(assortativity) + ylab("Assortativity")
+
+
+interactions_var <- cbind(norm_rv[1:2],norm_rv_2[2])
+names(interactions_var) <- c("Year","1","2")
+transitivity_var <- cbind(norm_rv[1], norm_rv[3],norm_rv_2[3])
+names(transitivity_var) <- c("Year","1","2")
+cpl_var <- cbind(norm_rv[1], norm_rv[4],norm_rv_2[4])
+names(cpl_var) <- c("Year","1","2")
+assortativity_var <- cbind(norm_rv[1], norm_rv[5],norm_rv_2[5])
+names(assortativity_var) <- c("Year","1","2")
+
+interactions_var <- melt(interactions_var, id="Year")
+transitivity_var <- melt(transitivity_var, id="Year")
+cpl_var <- melt(cpl_var, id="Year")
+assortativity_var <- melt(assortativity_var, id="Year")
+
+int_plot_var <- running_variance_plot(interactions_var)
+trans_plot_var <- running_variance_plot(transitivity_var) + xlab("Year") + ylab("Running variance")
+cpl_plot_var <- running_variance_plot(cpl_var)
+assort_plot_var <- running_variance_plot(assortativity_var)
+
+multiplot(int_plot, int_plot_var, trans_plot,  trans_plot_var, cpl_plot, cpl_plot_var, assort_plot,assort_plot_var,cols=2)
