@@ -63,7 +63,7 @@ norm_rv_2 <- normalize_df(running_variances_2,c(2,5))
 
 
 interactions <- cbind(topology_measures[1:2],topology_2[2])
-names(interactions) <- c("Year","Binary","Co-complex")
+names(interactions) <- c("Year","Binary assays","Co-complex assays")
 transitivity <- cbind(topology_measures[1], topology_measures[3],topology_2[3])
 names(transitivity) <- c("Year","Binary","Co-complex")
 cpl <- cbind(topology_measures[1], topology_measures[4],topology_2[4])
@@ -76,9 +76,13 @@ transitivity <- melt(transitivity, id="Year")
 cpl <- melt(cpl, id="Year")
 assortativity <- melt(assortativity, id="Year")
 
-int_plot <- network_stats_single_plot(interactions) + ylab("Interactions") + theme(legend.position="top",legend.title=element_blank())
+#int_plot <- network_stats_single_plot(interactions) + ylab("Interactions") + theme(legend.position="top",legend.title=element_blank())
+measure <- names(interactions)[2]
+
+int_plot <- ggplot(data= interactions,aes(x=Year,y=value,colour = variable)) + geom_line() + geom_point(aes()) + theme(panel.border=element_rect(colour="black",fill=NA),panel.grid.minor=element_blank(),panel.grid.major=element_blank(),panel.background=element_blank(),legend.position="none",axis.text=element_text(size=8)) + xlab("")+ scale_x_continuous(breaks=seq(2000,2014,2))+scale_y_continuous(breaks=c(5000,10000,15000,20000),limits=c(0,22000)) + geom_hline(aes(yintercept=20000),linetype="dashed") + ylab("Interactions") +  annotate("text",x=2004,y=21500,label="Estimated complete binary interactome",cex=2.4)
+
 trans_plot <- network_stats_single_plot(transitivity) + ylab("Transitivity")
-cpl_plot <- network_stats_single_plot(cpl) + ylab("CPL")
+cpl_plot <- network_stats_single_plot(cpl) + ylab("CPL") + theme(legend.position="top",legend.title=element_blank())
 assort_plot <- network_stats_single_plot(assortativity) + ylab("Assortativity")
 
 
