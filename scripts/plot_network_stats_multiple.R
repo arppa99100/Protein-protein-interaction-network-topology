@@ -1,6 +1,7 @@
 require(ggplot2)
 require(reshape2)
 require(scales)
+require(wq)
 
 setwd('../output')
 
@@ -43,7 +44,9 @@ normalize_df <- function (data_file,cols=c(1,len(data_file))) {
 	 
 	 return (data_file)
 	 }
+
 	
+#------------------------------------------------------------------------------------------
 
 
 topology_measures <- read.table("summary.txt",header=T)
@@ -54,15 +57,16 @@ topology_2 <- read.table("network_topology_1999-2014_115_3-fold.txt",header=T)
 running_variances_2 <- read.table("network_topology_1999-2014_115_3-fold_running_vars.txt",header=T)
 norm_rv_2 <- normalize_df(running_variances_2,c(2,5))
 
+
+#------------------------------------------------------------------------------------------
+
+
 interactions <- cbind(topology_measures[1:2],topology_2[2])
 names(interactions) <- c("Year","1","2")
-
 transitivity <- cbind(topology_measures[1], topology_measures[3],topology_2[3])
 names(transitivity) <- c("Year","1","2")
-
 cpl <- cbind(topology_measures[1], topology_measures[4],topology_2[4])
 names(cpl) <- c("Year","1","2")
-
 assortativity <- cbind(topology_measures[1], topology_measures[5],topology_2[5])
 names(assortativity) <- c("Year","1","2")
 
@@ -75,6 +79,9 @@ int_plot <- network_stats_single_plot(interactions) + ylab("Interactions")
 trans_plot <- network_stats_single_plot(transitivity) + ylab("Transitivity")
 cpl_plot <- network_stats_single_plot(cpl) + ylab("CPL")
 assort_plot <- network_stats_single_plot(assortativity) + ylab("Assortativity")
+
+
+#------------------------------------------------------------------------------------------
 
 
 interactions_var <- cbind(norm_rv[1:2],norm_rv_2[2])
@@ -96,4 +103,35 @@ trans_plot_var <- running_variance_plot(transitivity_var) + xlab("Year") + ylab(
 cpl_plot_var <- running_variance_plot(cpl_var)
 assort_plot_var <- running_variance_plot(assortativity_var)
 
-multiplot(int_plot, int_plot_var, trans_plot,  trans_plot_var, cpl_plot, cpl_plot_var, assort_plot,assort_plot_var,cols=2)
+
+#------------------------------------------------------------------------------------------
+
+
+# multiplot(int_plot, int_plot_var, trans_plot,  trans_plot_var, cpl_plot, cpl_plot_var, assort_plot,assort_plot_var,cols=2)
+
+layOut(list(int_plot,1:3,1:2),
+		list(int_plot_var,4:5,1:2),
+		list(cpl_plot,1:3,3:4),
+		list(cpl_plot_var,4:5,3:4),
+		list(trans_plot,6:8,1:2),
+		list(trans_plot_var,9:10,1:2),
+		list(assort_plot,6:8,3:4),
+		list(assort_plot,9:10,3:4))
+
+
+# g_legend<-function(p){
+# tmp <- ggplotGrob(p)
+# leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+# legend <- tmp$grobs[[leg]]
+# return(legend)}
+
+
+
+# legend_plot <- ggplot(data=interactions,aes(x=Year,y=value,colour = variable)) + geom_line()
+# leg_plot <- ggplot(data=interactions,
+# legend <- g_legend(legend_plot)
+
+# grid.arrange(arrangeGrob(int_plot,trans_plot,cpl_plot,assort_plot,int_plot_var,trans_plot_var,cpl_plot_var,assort_plot_var,ncol=2),legend)
+
+
+# grid.arrange(arrangeGrob(arrangeGrob(int_plot,trans_plot,cpl_plot,assort_plot,int_plot_var,trans_plot_var,cpl_plot_var,assort_plot_var),legend))
