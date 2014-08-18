@@ -82,8 +82,8 @@ normalize_df <- function (data_file,cols=c(1,len(data_file))) {
 	
 
 
-topology_measures=read.table("summary_cocomplex_largest_component.txt",header=T)
-running_variances=read.table("running_variance_binary_largest_component.txt",header=T)
+topology_measures=read.table("summary.txt",header=T)
+running_variances=read.table("running_variance.txt",header=T)
 norm_rv=normalize_df(running_variances,c(2,5))
 
 

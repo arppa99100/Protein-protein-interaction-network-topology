@@ -12,7 +12,7 @@ def num_pubs():
 	'''
 
 	()
-	files=[fl for fl in os.listdir('.') if not fl.startswith('.')]
+	files=[fl for fl in os.listdir('.') if not fl.startswith('.') and fl.endswith('txt')]
 	studies={}
 
 	for fl in files:
@@ -48,7 +48,7 @@ def create_network(year,pubs):
 	'''
 
 	()
-	files=[fl for fl in os.listdir('.') if not fl.startswith('.')]
+	files=[fl for fl in os.listdir('.') if not fl.startswith('.') and fl.endswith('txt')]
 	network=nx.Graph()
 
 	for fl in files:
@@ -103,15 +103,17 @@ def network_stats(yr_start,yr_end):
 	'''
 
 	pubs=num_pubs()
-	stats=[[],[],[],[],[]]
+	stats=[[],[],[],[],[],[]]
 
 	for year in range(yr_start,yr_end+1):
 		ntwk=create_network(year,pubs)
+		largest_component=nx.connected_component_subgraphs(ntwk)[0]
 		stats[0].append(year)
 		stats[1].append(len(ntwk.edges()))
 		stats[2].append(nx.transitivity(ntwk))
-		stats[3].append(cpl(ntwk))
+		stats[3].append(cpl(largest_component))
 		stats[4].append(nx.degree_assortativity_coefficient(ntwk))
+		stats[5].append(len(ntwk.edges())/float(20000))
 
 	return stats
 
@@ -120,7 +122,12 @@ os.chdir('../data')
 graph_stats=network_stats(1999,2014)
 outfl=open('../output/summary.txt','w')
 
-
+# Below: write output with 1rst column == Year
 outfl.write('Year\tInteractions\tTransitivity\tCPL\tAssortativity\n')
 for i in range(len(graph_stats[0])):
 	outfl.write(str(graph_stats[0][i])+'\t'+str(graph_stats[1][i])+'\t'+str(graph_stats[2][i])+'\t'+str(graph_stats[3][i])+'\t'+str(graph_stats[4][i])+'\n')
+
+# Below: wirte output with 1rst column == Proportion of predicted complete interactome covered
+#outfl.write('Proportion\tInteractions\tTransitivity\tCPL\tAssortativity\n')
+#for i in range(len(graph_stats[0])):
+#	outfl.write(str(graph_stats[5][i])+'\t'+str(graph_stats[1][i])+'\t'+str(graph_stats[2][i])+'\t'+str(graph_stats[3][i])+'\t'+str(graph_stats[4][i])+'\n')
